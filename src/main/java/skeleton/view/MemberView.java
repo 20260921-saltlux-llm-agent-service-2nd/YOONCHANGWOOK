@@ -43,7 +43,7 @@ public class MemberView {
      */
     public void displayPlanHistoryByOtt(Map<String, List<String>> planHistory) {
         System.out.println();
-        System.out.println("===== OTT별 이용했던 플랜 =====");
+        System.out.println("====== OTT별 이용했던 플랜 ======");
         for (Map.Entry<String, List<String>> entry : planHistory.entrySet()) {
             System.out.println(entry.getKey() + " : " + String.join(", ", entry.getValue()));
         }
