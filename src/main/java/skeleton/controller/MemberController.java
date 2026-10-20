@@ -41,6 +41,7 @@ public class MemberController {
      */
     public boolean login(String phone) {
         // TODO: 휴대폰 번호로 로그인 상태를 설정하세요.
+
         return false;
     }
 
@@ -65,6 +66,8 @@ public class MemberController {
      */
     public void displayMyActiveMemberships() {
         // TODO: 로그인 회원의 현재 구독 목록을 화면에 전달하세요.
+
+        memberView.displayMemberships(membershipRepository.findActiveMembershipsByMemberId(loginMember.getMemberId()));
     }
 
     /*
