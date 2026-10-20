@@ -19,5 +19,10 @@
     <entry key="deleteMembership">TODO</entry>
 
     <!-- TODO: OTT별 이용했던 플랜 목록 조회 SQL을 작성하세요. -->
-    <entry key="selectPlanHistory">TODO</entry>
+    <entry key="selectPlanHistory">
+        SELECT DISTINCT ott_type, plan_name
+        FROM membership_tbl
+        WHERE member_id = ?
+        ORDER BY ott_type, plan_name
+    </entry>
 </properties>

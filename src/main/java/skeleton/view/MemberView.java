@@ -42,7 +42,11 @@ public class MemberView {
      * OTT 이름과 해당 OTT에서 이용했던 플랜 이름들을 한 줄에 출력한다.
      */
     public void displayPlanHistoryByOtt(Map<String, List<String>> planHistory) {
-        // TODO: OTT별 플랜 목록을 출력하세요.
+        System.out.println();
+        System.out.println("===== OTT별 이용했던 플랜 =====");
+        for (Map.Entry<String, List<String>> entry : planHistory.entrySet()) {
+            System.out.println(entry.getKey() + " : " + String.join(", ", entry.getValue()));
+        }
     }
 
     /*

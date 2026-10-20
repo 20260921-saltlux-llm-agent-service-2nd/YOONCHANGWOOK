@@ -1,7 +1,11 @@
 package skeleton.repository;
 
 import skeleton.model.Membership;
-
+import skeleton.common.JDBCTemplate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.sql.PreparedStatement;
 
 /**
  * 구독 정보 JDBC 처리 담당.
@@ -114,7 +119,27 @@ public class MembershipRepository {
      * SQL은 prop.getProperty("selectPlanHistory")로 조회한다.
      */
     public Map<String, List<String>> findSubscribedPlansByOtt(int memberId) {
-        // TODO: XML의 SQL을 사용해 조회 결과를 OTT별 플랜 목록으로 그룹화하세요.
-        return new LinkedHashMap<>();
+        Map<String, List<String>> planHistory = new LinkedHashMap<>();
+        String sql = prop.getProperty("selectPlanHistory");
+
+        try (Connection con = JDBCTemplate.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, memberId);
+
+            try (ResultSet rset = pstmt.executeQuery()) {
+                while (rset.next()) {
+                    String ottType = rset.getString("ott_type");
+                    String planName = rset.getString("plan_name");
+
+                    planHistory.computeIfAbsent(ottType, key -> new ArrayList<>())
+                            .add(planName);
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("OTT별 플랜 목록을 조회하지 못했습니다.", e);
+        }
+
+        return planHistory;
     }
 }

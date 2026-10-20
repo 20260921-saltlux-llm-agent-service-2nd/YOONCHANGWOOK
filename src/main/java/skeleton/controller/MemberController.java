@@ -4,6 +4,8 @@ import skeleton.model.Member;
 import skeleton.repository.MemberRepository;
 import skeleton.repository.MembershipRepository;
 import skeleton.view.MemberView;
+import java.util.List;
+import java.util.Map;
 
 // 사용자 입력과 repository/view 사이의 흐름을 조정한다.
 public class MemberController {
@@ -111,7 +113,15 @@ public class MemberController {
      * 결과가 있으면 MemberView의 OTT별 플랜 출력 메서드로 전달한다.
      */
     public void displayMyPlanHistoryByOtt() {
-        // TODO: 로그인 회원의 OTT별 플랜 이력을 화면에 전달하세요.
+        Map<String, List<String>> planHistory =
+                membershipRepository.findSubscribedPlansByOtt(loginMember.getMemberId());
+
+        if (planHistory.isEmpty()) {
+            memberView.displayMessage("구독 이력이 없습니다.");
+            return;
+        }
+
+        memberView.displayPlanHistoryByOtt(planHistory);
     }
 
     /*
