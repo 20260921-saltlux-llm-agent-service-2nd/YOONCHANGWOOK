@@ -30,6 +30,29 @@ public class MemberController {
      */
     public void signUp(String name, int age, String phone) {
         // TODO: 입력값과 휴대폰 번호 중복을 확인한 뒤 신규 회원을 저장하세요.
+
+        if (name == null || phone == null || age < 1) {
+            System.out.println("제대로된 입력 값을 넣어주세요.");
+        }
+
+        // 결과가 있으면 해당 member 반환, 없으면 null
+        Member member = memberRepository.findByPhone(phone);
+
+        if (member != null) {
+            member.setMemberId(0);
+            member.setName(name);
+            member.setAge(age);
+            member.setPhone(phone);
+            boolean saved = memberRepository.save(member);
+            if (saved){
+                System.out.println("회원가입이 완료되었습니다.");
+            } else {
+                System.out.println("회원가입에 실패했습니다.");
+            }
+
+        } else {
+            System.out.println("이미 등록된 핸드폰 번호입니다.");
+        }
     }
 
     /*
