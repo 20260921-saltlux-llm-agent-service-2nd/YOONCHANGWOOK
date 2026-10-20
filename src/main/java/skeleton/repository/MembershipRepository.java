@@ -4,11 +4,17 @@ import skeleton.model.Membership;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import static skeleton.common.JDBCTemplate.getConnection;
 
 /**
  * 구독 정보 JDBC 처리 담당.
@@ -59,7 +65,31 @@ public class MembershipRepository {
      */
     public List<Membership> findActiveMembershipsByMemberId(int memberId) {
         // TODO: XML의 SQL을 사용해 로그인 회원의 현재 구독 목록을 조회하세요.
-        return new ArrayList<>();
+        Connection con = getConnection();
+        List<Membership> memberships = new ArrayList<>();
+        String sql = prop.getProperty("selectActiveMemberships");
+
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, memberId);
+
+            try (ResultSet rset = pstmt.executeQuery()) {
+                while (rset.next()) {
+                    Membership m = new Membership();
+                    m.setMembershipId(rset.getInt("membership_id"));
+                    m.setOttType(rset.getString("ott_type"));
+                    m.setPlanName(rset.getString("plan_name"));
+                    m.setEnrollDate(rset.getTimestamp("enroll_date").toLocalDateTime());
+                    m.setExpiryDate(rset.getTimestamp("expiry_date").toLocalDateTime());
+                    memberships.add(m);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return memberships;
     }
 
     /*

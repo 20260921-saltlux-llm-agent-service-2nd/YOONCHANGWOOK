@@ -318,3 +318,5 @@ VALUES (
        );
 
 COMMIT;
+
+select * from member_tbl;
