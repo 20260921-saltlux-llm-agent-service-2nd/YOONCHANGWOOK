@@ -4,7 +4,10 @@ import skeleton.model.Member;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.*;
+import java.sql.*;
+
+import static skeleton.common.JDBCTemplate.getConnection;
 
 /**
  * 회원 정보 JDBC 처리 담당.
@@ -37,7 +40,32 @@ public class MemberRepository {
      */
     public boolean save(Member member) {
         // TODO: XML의 SQL을 사용해 JDBC로 신규 회원을 저장하세요.
-        return false;
+
+        // xml의 키 값으로 쿼리문 불러오기
+        String savequery = prop.getProperty("insertMember");
+
+        try (
+                // 1. 커넥션 만들기
+                Connection con = getConnection();
+                // 2. PreStatement 객체 생성 -> 커넥션을 이용해 쿼리문 연결
+                PreparedStatement pstmt = con.prepareStatement(savequery);
+        ) {
+            // 3. ? 워치 홀더 내용 구현 - model.Member의 name, age, phone Insert
+            String name = member.getName();
+            pstmt.setString(1, name);
+            pstmt.setInt(2, member.getAge());
+            pstmt.setString(3, member.getPhone());
+
+            // 4. INSERT, UPDATE, DELETE -> executeUpdate()
+            int result = pstmt.executeUpdate();
+
+            // 5. 삽입이 되었으면 true 반환, 아니면 false 반환
+            return result == 1;
+
+        } catch (SQLException e) {
+            // 6. 원인을 포함해 예외 변환
+            throw new IllegalStateException("회원 저장에 실패했습니다.", e);
+        }
     }
 
     /*
