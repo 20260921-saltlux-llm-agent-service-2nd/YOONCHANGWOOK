@@ -48,7 +48,7 @@ public class MemberRepository {
                 // 1. 커넥션 만들기
                 Connection con = getConnection();
                 // 2. PreStatement 객체 생성 -> 커넥션을 이용해 쿼리문 연결
-                PreparedStatement pstmt = con.prepareStatement(savequery);
+                PreparedStatement pstmt = con.prepareStatement(savequery)
         ) {
             // 3. ? 워치 홀더 내용 구현 - model.Member의 name, age, phone Insert
             String name = member.getName();
@@ -81,7 +81,29 @@ public class MemberRepository {
      */
     public Member findByPhone(String phone) {
         // TODO: XML의 SQL을 사용해 휴대폰 번호가 일치하는 회원을 조회하세요.
-        return null;
+
+        String findquery = prop.getProperty("selectMemberByPhone");
+
+        try (Connection con = getConnection();
+             PreparedStatement pstmt = con.prepareStatement(findquery)
+             )
+        {
+            pstmt.setString(1, phone);
+            try(ResultSet rset = pstmt.executeQuery()) {
+                if (rset.next()) {
+                    return new Member(
+                            rset.getInt("member_id"),
+                            rset.getString("name"),
+                            rset.getInt("age"),
+                            rset.getString("phone")
+                    );
+                }
+                return null;
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("핸드폰 번호와 일치하는 회원이 존재하지 않습니다.", e);
+        }
     }
 
     /*

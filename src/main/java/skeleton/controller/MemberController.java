@@ -64,7 +64,13 @@ public class MemberController {
      */
     public boolean login(String phone) {
         // TODO: 휴대폰 번호로 로그인 상태를 설정하세요.
-
+        Member member = memberRepository.findByPhone(phone);
+        if(member != null) {
+            loginMember = member;
+            System.out.println("환영합니다.");
+            return true;
+        }
+        System.out.println("등록되지 않은 휴대폰 번호입니다.");
         return false;
     }
 
