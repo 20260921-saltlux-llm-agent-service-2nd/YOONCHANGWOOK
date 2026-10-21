@@ -160,5 +160,7 @@ public class MemberController {
      */
     public void logout() {
         // TODO: 로그인 상태를 해제하세요.
+        loginMember = null;
+        System.out.println("로그아웃되었습니다.");
     }
 }
